@@ -15,7 +15,7 @@
 #define MAX_DEPTH 10
 enum Render { WIREFRAME, RASTERISED, RAYTRACED };
 float clamp(float x, float mini, float maxi) {
-  return std::fmax(std::fmin(x, maxi), mini);
+  return fmax(fmin(x, maxi), mini);
 }
 void orbit(glm::vec3 &cameraPosition, glm::mat3 &cameraOrientation,
            float &angleTotal, float &frontWalk, float unit) {
@@ -117,15 +117,15 @@ float diffuseLight(std::vector<glm::vec3> lightSources,
         continue;
       }
     }
-    float angleOfIncidence = std::fmax(glm::dot(lightRay, pointNormal), 0.0f);
+    float angleOfIncidence = fmax(glm::dot(lightRay, pointNormal), 0.0f);
     float surfaceArea = (4 * M_PI * std::pow(magnitude, 2));
     float currentDiffuseLight = 0;
     currentDiffuseLight = (lightStrength * angleOfIncidence) / surfaceArea;
-    currentDiffuseLight = std::fmax(currentDiffuseLight, 0.0f);
+    currentDiffuseLight = fmax(currentDiffuseLight, 0.0f);
     diffuseLight += currentDiffuseLight;
   }
 
-  diffuseLight = std::fmax(diffuseLight, 0.0f);
+  diffuseLight = fmax(diffuseLight, 0.0f);
   diffuseLight /= lightSources.size();
   return diffuseLight;
 }
@@ -257,7 +257,7 @@ bool parseMTL(const char *path,
       char textureFile[128];
       fscanf(file, "%s\n", textureFile);
       char source[] = "src/";
-      std::strcat(source, textureFile);
+      strcat(source, textureFile);
       textureMap = TextureMap(source);
     }
   }
@@ -418,7 +418,7 @@ void draw_line(DrawingWindow &window, CanvasPoint from, CanvasPoint to,
   float xDiff = to.x - from.x;
   float yDiff = to.y - from.y;
   float zDiff = to.depth - from.depth;
-  float numberOfSteps = fmax(abs(xDiff), abs(yDiff));
+  float numberOfSteps = fmax(std::fabs(xDiff), std::fabs(yDiff));
   float xStepSize = xDiff / numberOfSteps;
   float yStepSize = yDiff / numberOfSteps;
   float zStepSize = zDiff / numberOfSteps;
@@ -618,7 +618,7 @@ void draw_textured_triangle(DrawingWindow &window, CanvasTriangle triangle,
   std::vector<CanvasPoint> right2 = interpolatePoints(
       triangle.v2(), v3, triangle.v2().y - triangle.v1().y + 2);
   for (int i = 0; i < left2.size(); i++) {
-    int steps = abs(left2[i].x - right2[i].x);
+    int steps = std::fabs(left2[i].x - right2[i].x);
 
     std::vector<CanvasPoint> points =
         interpolatePoints(left2[i], right2[i], steps + 2);
